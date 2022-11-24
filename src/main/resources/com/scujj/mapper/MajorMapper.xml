@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scujj.mapper.MajorMapper">
+    <resultMap id="listWithCollege" type="MajorEntity">
+        <id property="id" column="mid"></id>
+        <result property="name" column="mname"></result>
+        <association property="college" javaType="CollegeEntity">
+            <id property="id" column="cid"></id>
+            <result property="name" column="cname"></result>
+        </association>
+    </resultMap>
+
+    <select id="listWithCollege" resultMap="listWithCollege">
+        SELECT m.id mid,m.name mname,c.id cid,c.name cname
+        FROM tb_major m
+        left join tb_college c
+        on m.college_id = c.id
+        <where>
+            <if test="nameKey!=null and nameKey!=''">
+                and m.name like #{nameKey}
+            </if>
+            <foreach collection="collegeIdList" item="idItem" index="" open="and" separator="or">
+                <if test="idItem!=null">
+                    c.id = #{idItem}
+                </if>
+            </foreach>
+        </where>
+        limit #{page},#{limit}
+    </select>
+
+
+    <select id="selectCountWithCollege" resultType="java.lang.Integer">
+        SELECT COUNT(m.id)
+        FROM tb_major m
+        left join tb_college c
+        on m.college_id = c.id
+        <where>
+            <if test="nameKey!=null and nameKey!=''">
+                and m.name like #{nameKey}
+            </if>
+            <foreach collection="collegeIdList" item="idItem" index="" open="and" separator="or">
+                <if test="idItem!=null">
+                    c.id = #{idItem}
+                </if>
+            </foreach>
+
+        </where>
+    </select>
+
+    <delete id="deleteWithCollegeAndClassAndStudent">
+        <foreach collection="ids" item="id">
+            DELETE FROM tb_major where id = #{id}
+        </foreach>
+    </delete>
+
+</mapper>

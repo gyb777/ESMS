@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scujj.mapper.ClassMapper">
+    <resultMap id="listClassWithMajor" type="ClassEntity">
+        <id property="id" column="cid"></id>
+        <result property="name" column="cname"></result>
+        <association property="major" javaType="MajorEntity">
+            <id property="id" column="mid"></id>
+            <result property="name" column="mname"></result>
+        </association>
+    </resultMap>
+    <select id="listClassWithMajor" resultType="com.scujj.entity.ClassEntity" resultMap="listClassWithMajor">
+        SELECT c.id cid,c.name cname,m.id mid,m.name mname FROM tb_class c
+        left join tb_major m on m.id = c.major_id
+        left join tb_college tc on m.college_id = tc.id
+        <where>
+            <if test="collegeId!=null">
+                and tc.id = #{collegeId}
+            </if>
+            <if test="majorId!=null">
+                and m.id = #{majorId}
+            </if>
+            <if test="key!=null and key!=''">
+                and c.name like #{key}
+            </if>
+        </where>
+        LIMIT #{page},#{limit}
+    </select>
+    <select id="countClassWithMajor" resultType="java.lang.Long">
+        SELECT count(c.id) FROM tb_class c
+        left join tb_major m on m.id = c.major_id
+        left join tb_college tc on m.college_id = tc.id
+        <where>
+            <if test="collegeId!=null">
+                and tc.id = #{collegeId}
+            </if>
+            <if test="majorId!=null">
+                and m.id = #{majorId}
+            </if>
+            <if test="key!=null and key!=''">
+                and c.name like #{key}
+            </if>
+        </where>
+    </select>
+</mapper>
