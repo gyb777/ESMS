@@ -15,4 +15,8 @@ public interface StudentService extends IService<StudentEntity> {
                                        Integer majorId,
                                        Integer classId,
                                        String key);
+
+    StudentEntity getStudentByPhoneNumber(String phoneNumber);
+    StudentEntity getStudentById(Integer id);
+    StudentEntity getStudentByNumber(String studentNumber);
 }

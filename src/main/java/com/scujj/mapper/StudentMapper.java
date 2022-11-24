@@ -24,30 +24,36 @@ public interface StudentMapper extends BaseMapper<StudentEntity> {
                                              @Param("key") String key);
 
     long countStudentWithClass(@Param("page") Long page,
-                              @Param("limit") Long limit,
-                              @Param("collegeId") Integer collegeId,
-                              @Param("majorId") Integer majorId,
-                              @Param("classId") Integer classId,
-                              @Param("key") String key);
+                               @Param("limit") Long limit,
+                               @Param("collegeId") Integer collegeId,
+                               @Param("majorId") Integer majorId,
+                               @Param("classId") Integer classId,
+                               @Param("key") String key);
 
     long countHealth(@Param("page") Long page,
-                    @Param("limit") Long limit,
-                    @Param("collegeId") Integer collegeId,
-                    @Param("majorId") Integer majorId,
-                    @Param("classId") Integer classId,
-                    @Param("key") String key);
+                     @Param("limit") Long limit,
+                     @Param("collegeId") Integer collegeId,
+                     @Param("majorId") Integer majorId,
+                     @Param("classId") Integer classId,
+                     @Param("key") String key);
 
     long countDiagnosis(@Param("page") Long page,
+                        @Param("limit") Long limit,
+                        @Param("collegeId") Integer collegeId,
+                        @Param("majorId") Integer majorId,
+                        @Param("classId") Integer classId,
+                        @Param("key") String key);
+
+    long countInSchool(@Param("page") Long page,
                        @Param("limit") Long limit,
                        @Param("collegeId") Integer collegeId,
                        @Param("majorId") Integer majorId,
                        @Param("classId") Integer classId,
                        @Param("key") String key);
 
-    long countInSchool(@Param("page") Long page,
-                      @Param("limit") Long limit,
-                      @Param("collegeId") Integer collegeId,
-                      @Param("majorId") Integer majorId,
-                      @Param("classId") Integer classId,
-                      @Param("key") String key);
+    StudentEntity getStudentByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+    StudentEntity selectStudentById(@Param("id") Integer id);
+
+    StudentEntity selectStudentByNumber(@Param("studentNumber") String studentNumber);
 }

@@ -27,11 +27,10 @@ public class JWTTest {
     }
     @Test
     public void test2(){
-        DecodedJWT decodedJWT = JWTUtils.decode("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxIiwidXNlclBvd2VyIjoicm9vdCJ9.GniUUh7z_fU_mAGTRRQbUSIvQKJUqc_PE4aFSH8z5nQ");
+        DecodedJWT decodedJWT = JWTUtils.decode("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lIjoiMTY2O" +
+                "TI5MTMyNDkxOCIsInVzZXJJZCI6IjEwIn0.2NI5lIZkpiLsS3Xdnv9y_YlILS_oV-yD_dRtD6Krf10");
         Claim userId = decodedJWT.getClaim("userId");
-        Claim userPower = decodedJWT.getClaim("userPower");
         System.out.println("userid="+userId.asString());
-        System.out.println("userPower="+userPower.asString());
     }
     @Test
     public void redisTest(){

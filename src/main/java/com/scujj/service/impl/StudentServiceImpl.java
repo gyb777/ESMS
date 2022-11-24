@@ -84,4 +84,19 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, StudentEntity
         data.put("studentList", studentList);
         return data;
     }
+
+    @Override
+    public StudentEntity getStudentByPhoneNumber(String phoneNumber) {
+        return studentMapper.getStudentByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public StudentEntity getStudentById(Integer id) {
+        return studentMapper.selectStudentById(id);
+    }
+
+    @Override
+    public StudentEntity getStudentByNumber(String studentNumber) {
+        return studentMapper.selectStudentByNumber(studentNumber);
+    }
 }

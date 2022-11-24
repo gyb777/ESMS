@@ -10,6 +10,7 @@
         <result property="phoneNumber" column="phone_number"></result>
         <result property="inSchool" column="in_school"></result>
         <result property="healthStatus" column="health_status"></result>
+        <result property="password" column="password"></result>
         <association property="classEntity" javaType="ClassEntity">
             <id property="id" column="cid"></id>
             <result property="name" column="cname"></result>
@@ -23,7 +24,8 @@
         s.in_school,
         s.health_status,
         c.id cid,
-        c.name cname
+        c.name cname,
+        s.password
         FROM tb_student s
         left join tb_class c on c.id = s.class_id
         left join tb_major tm on tm.id = c.major_id
@@ -130,5 +132,47 @@
                 and s.name like #{key}
             </if>
         </where>
+    </select>
+    <select id="getStudentByPhoneNumber" resultType="StudentEntity" resultMap="listStudentWithClass">
+        SELECT s.id   sid,
+               s.name sname,
+               s.student_number,
+               s.phone_number,
+               s.in_school,
+               s.health_status,
+               c.id   cid,
+               c.name cname,
+               s.password
+        FROM tb_student s
+                 left join tb_class c on c.id = s.class_id
+        where s.phone_number = #{phoneNumber}
+    </select>
+    <select id="selectStudentById" resultType="StudentEntity" resultMap="listStudentWithClass">
+        SELECT s.id   sid,
+               s.name sname,
+               s.student_number,
+               s.phone_number,
+               s.in_school,
+               s.health_status,
+               c.id   cid,
+               c.name cname,
+               s.password
+        FROM tb_student s
+                 left join tb_class c on c.id = s.class_id
+        where s.id = #{id}
+    </select>
+    <select id="selectStudentByNumber" resultType="StudentEntity" resultMap="listStudentWithClass">
+        SELECT s.id   sid,
+               s.name sname,
+               s.student_number,
+               s.phone_number,
+               s.in_school,
+               s.health_status,
+               c.id   cid,
+               c.name cname,
+               s.password
+        FROM tb_student s
+                 left join tb_class c on c.id = s.class_id
+        where s.student_number = #{studentNumber}
     </select>
 </mapper>
