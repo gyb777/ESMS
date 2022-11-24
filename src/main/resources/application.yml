@@ -16,3 +16,4 @@ mybatis-plus:
   type-aliases-package: com.scujj.entity
   configuration:
     map-underscore-to-camel-case: true
+

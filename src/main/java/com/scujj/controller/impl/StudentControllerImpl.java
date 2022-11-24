@@ -126,7 +126,7 @@ public class StudentControllerImpl implements StudentController {
     public Result phoneNumberLogin(@RequestBody HashMap<String, String> map) {
         String phoneNumber = map.get("phone_number");
         String checkCode = map.get("checkcode");
-        if (phoneNumber == null) {
+        if (phoneNumber == null||phoneNumber.equals("")) {
             return new Result(2, "手机号有误", null);
         }
         StudentEntity student = studentService.getStudentByPhoneNumber(phoneNumber);
@@ -177,11 +177,11 @@ public class StudentControllerImpl implements StudentController {
     public Result login(@RequestBody HashMap<String, String> map) {
         String userName = map.get("username");
         String passWord = map.get("password");
-        if(userName==null||passWord==null){
-            return new Result(2,"用户名或密码错误",null);
+        if (userName == null || passWord == null) {
+            return new Result(2, "用户名或密码错误", null);
         }
         StudentEntity student = studentService.getStudentByNumber(userName);
-        if(student.getPassword().equals(passWord)){
+        if (student.getPassword().equals(passWord)) {
             Integer id = student.getId();
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("userId", String.valueOf(id));
@@ -196,8 +196,8 @@ public class StudentControllerImpl implements StudentController {
             data.put("classId", student.getClassEntity().getId());
             data.put("token", token);
             return new Result(1, "成功", data);
-        }else {
-            return new Result(2,"用户名或密码错误",null);
+        } else {
+            return new Result(2, "用户名或密码错误", null);
         }
     }
 
@@ -206,6 +206,79 @@ public class StudentControllerImpl implements StudentController {
     public Result logout(@Autowired HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         stringRedisTemplate.delete(token);
-        return new Result(1,"成功",null);
+        return new Result(1, "成功", null);
+    }
+
+    @Override
+    @PutMapping("/student/password")
+    public Result updatePassword(@RequestBody HashMap<String, Object> map) {
+        Integer id = (Integer) map.get("user_id");
+        String oldPassword = (String) map.get("old_password");
+        String password = (String) map.get("password");
+        StudentEntity student = studentService.getStudentById(id);
+        UpdateWrapper<StudentEntity> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", id);
+        wrapper.set("password", password);
+        if (student == null) {
+            return new Result(3, "id=" + id + "的学生不存在", null);
+        }
+        if (oldPassword == null || oldPassword.equals("") || !oldPassword.equals(student.getPassword())) {
+            return new Result(2, "密码错误", null);
+        }
+        if (password != null && !password.equals("") && studentService.update(wrapper)) {
+            return new Result(1, "成功", null);
+        } else {
+            return new Result(3, "参数错误", null);
+        }
+    }
+
+    @Override
+    @PutMapping("/student/phone")
+    public Result updatePhone(@RequestBody HashMap<String, Object> map) {
+        Integer id = (Integer) map.get("user_id");
+        String phoneNumber = (String) map.get("phone_number");
+        String checkcode = (String) map.get("checkcode");
+        if (id == null || phoneNumber == null || checkcode == null) {
+            return new Result(3, "参数错误", null);
+        }
+        StudentEntity student = studentService.getStudentById(id);
+        if (student == null) {
+            return new Result(3, "id=" + id + "的学生不存在", null);
+        }
+        if (phoneNumberCheckCodeUtil.checkCheckCode(phoneNumber, checkcode)) {
+            UpdateWrapper<StudentEntity> wrapper = new UpdateWrapper<>();
+            wrapper.eq("id", id);
+            wrapper.set("phone_number", phoneNumber);
+            if (studentService.update(wrapper)) {
+                return new Result(1, "成功", null);
+            } else {
+                return new Result(3, "未知错误", null);
+            }
+        } else {
+            return new Result(2, "验证码错误", null);
+        }
+    }
+
+    @Override
+    @PostMapping("/student/password")
+    public Result updatePasswordByPhoneNumber(@RequestBody HashMap<String, Object> map) {
+        String phoneNumber = (String) map.get("phone_number");
+        String checkcode = (String) map.get("checkcode");
+        String password = (String) map.get("password");
+        if(studentService.getStudentByPhoneNumber(phoneNumber)==null){
+            new Result(3,"手机号错误",null);
+        }
+        if(phoneNumberCheckCodeUtil.checkCheckCode(phoneNumber,checkcode)){
+            UpdateWrapper<StudentEntity> wrapper = new UpdateWrapper<>();
+            wrapper.eq("phone_number",phoneNumber);
+            wrapper.set("password",password);
+            if(studentService.update(wrapper)){
+                return new Result(1,"成功",null);
+            }else {
+                return new Result(3, "未知错误", null);
+            }
+        }else {
+            return new Result(2,"验证码错误",null);
+        }
     }
 }

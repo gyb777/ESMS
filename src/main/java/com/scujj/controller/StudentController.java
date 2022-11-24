@@ -1,7 +1,6 @@
 package com.scujj.controller;
 
 import com.scujj.entity.Result;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -23,11 +22,17 @@ public interface StudentController {
 
     Result getCheckCode(String tele);
 
-    Result phoneNumberLogin(HashMap<String,String> map);
+    Result phoneNumberLogin(HashMap<String, String> map);
 
     Result getUser(HttpServletRequest httpServletRequest);
 
-    Result login(HashMap<String,String> map);
+    Result login(HashMap<String, String> map);
 
     Result logout(HttpServletRequest httpServletRequest);
+
+    Result updatePassword(HashMap<String, Object> map);
+
+    Result updatePhone(HashMap<String,Object> map);
+
+    Result updatePasswordByPhoneNumber(HashMap<String,Object> map);
 }
