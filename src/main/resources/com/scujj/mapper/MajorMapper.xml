@@ -45,7 +45,6 @@
                     c.id = #{idItem}
                 </if>
             </foreach>
-
         </where>
     </select>
 
