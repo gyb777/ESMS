@@ -126,7 +126,7 @@ public class StudentControllerImpl implements StudentController {
     public Result phoneNumberLogin(@RequestBody HashMap<String, String> map) {
         String phoneNumber = map.get("phone_number");
         String checkCode = map.get("checkcode");
-        if (phoneNumber == null||phoneNumber.equals("")) {
+        if (phoneNumber == null || phoneNumber.equals("")) {
             return new Result(2, "手机号有误", null);
         }
         StudentEntity student = studentService.getStudentByPhoneNumber(phoneNumber);
@@ -265,20 +265,40 @@ public class StudentControllerImpl implements StudentController {
         String phoneNumber = (String) map.get("phone_number");
         String checkcode = (String) map.get("checkcode");
         String password = (String) map.get("password");
-        if(studentService.getStudentByPhoneNumber(phoneNumber)==null){
-            new Result(3,"手机号错误",null);
+        if (studentService.getStudentByPhoneNumber(phoneNumber) == null) {
+            new Result(3, "手机号错误", null);
         }
-        if(phoneNumberCheckCodeUtil.checkCheckCode(phoneNumber,checkcode)){
+        if (phoneNumberCheckCodeUtil.checkCheckCode(phoneNumber, checkcode)) {
             UpdateWrapper<StudentEntity> wrapper = new UpdateWrapper<>();
-            wrapper.eq("phone_number",phoneNumber);
-            wrapper.set("password",password);
-            if(studentService.update(wrapper)){
-                return new Result(1,"成功",null);
-            }else {
+            wrapper.eq("phone_number", phoneNumber);
+            wrapper.set("password", password);
+            if (studentService.update(wrapper)) {
+                return new Result(1, "成功", null);
+            } else {
                 return new Result(3, "未知错误", null);
             }
-        }else {
-            return new Result(2,"验证码错误",null);
+        } else {
+            return new Result(2, "验证码错误", null);
+        }
+    }
+
+    @Override
+    @PutMapping("/root/inSchool")
+    @Transactional
+    public Result updateInSchool(@RequestBody HashMap<String, Object> map) {
+        List<Integer> studentIdList = (List<Integer>) map.get("student_id_list");
+        Integer inSchool = (Integer) map.get("in_school");
+        if (studentIdList != null && inSchool != null) {
+            for (Integer id : studentIdList) {
+                UpdateWrapper<StudentEntity> wrapper = new UpdateWrapper<>();
+                wrapper.eq("id", id);
+                wrapper.set("in_school", inSchool);
+                studentService.update(wrapper);
+            }
+            return new Result(1, "成功", null);
+
+        } else {
+            return new Result(3, "参数错误", null);
         }
     }
 }

@@ -7,14 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_root")
-public class RootEntity {
+@TableName("tb_news")
+public class NewsEntity {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String name;
-    private String job;
-    private String password;
+    private String title;
+    private String context;
+    private Date time;
 }

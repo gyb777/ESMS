@@ -16,4 +16,7 @@ mybatis-plus:
   type-aliases-package: com.scujj.entity
   configuration:
     map-underscore-to-camel-case: true
-
+logging:
+  level:
+   com.scujj.mapper: info
+   com.scujj.mapper.LeaveMapper: debug

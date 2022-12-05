@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+import java.util.List;
 
 @Mapper
 public interface LeaveMapper extends BaseMapper<LeaveEntity> {
@@ -22,4 +23,20 @@ public interface LeaveMapper extends BaseMapper<LeaveEntity> {
                   @Param("county") String county,
                   @Param("position") String position,
                   @Param("time") Date time);
+
+    List<LeaveEntity> selectWithStudent(@Param("page") Long page,
+                                        @Param("limit") Long limit,
+                                        @Param("startTime") Date startTime,
+                                        @Param("endTime") Date endTime,
+                                        @Param("collegeIdList") List<Integer> collegeIdList,
+                                        @Param("majorIdList") List<Integer> majorIdList,
+                                        @Param("classIdList") List<Integer> classIdList,
+                                        @Param("status") Integer status);
+
+    Long countWithStudent(@Param("startTime") Date startTime,
+                          @Param("endTime") Date endTime,
+                          @Param("collegeIdList") List<Integer> collegeIdList,
+                          @Param("majorIdList") List<Integer> majorIdList,
+                          @Param("classIdList") List<Integer> classIdList,
+                          @Param("status") Integer status);
 }

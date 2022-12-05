@@ -4,6 +4,7 @@ import com.scujj.entity.Result;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface LeaveController {
     Result addOrUpdateLeave(Integer studentId,
@@ -24,4 +25,15 @@ public interface LeaveController {
                         Long page,
                         Long limit,
                         Integer status);
+
+    Result getLeaveList(Long page,
+                        Long limit,
+                        String startTime,
+                        String endTime,
+                        List<Integer> collegeIdList,
+                        List<Integer> majorIdList,
+                        List<Integer> classIdList,
+                        Integer status);
+
+    Result updateLeave(HashMap<String,Object> map);
 }

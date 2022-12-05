@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scujj.mapper.HealthStatusMapper">
+    <resultMap id="selectWithStudent" type="HealthStatusEntity">
+        <id property="id" column="hid"/>
+        <result property="studentId" column="student_id"/>
+        <result property="healthStatus" column="health_status"/>
+        <result property="fever" column="fever"/>
+        <result property="others" column="others"/>
+        <result property="contact" column="contact"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="county" column="county"/>
+        <result property="position" column="position"/>
+        <result property="time" column="time"/>
+        <result property="riskArea" column="riskarea"/>
+        <association property="student" javaType="StudentEntity">
+            <id property="id" column="sid"/>
+            <result property="name" column="name"/>
+            <result property="studentNumber" column="student_number"/>
+            <result property="phoneNumber" column="phone_number"/>
+            <result property="healthStatus" column="health_status"/>
+            <result property="inSchool" column="in_school"/>
+            <association property="classEntity" javaType="ClassEntity">
+                <id property="id" column="cid"/>
+                <result property="name" column="cname"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="selectWithStudent" resultType="HealthStatusEntity" resultMap="selectWithStudent">
+        select h.id hid,
+        student_id,
+        h.health_status,
+        fever,
+        others,
+        contact,
+        province,
+        city,
+        county,
+        position,
+        time,
+        riskarea,
+        s.id sid,
+        s.name,
+        student_number,
+        c.id cid,
+        c.name cname
+        from tb_healthstatus h
+        left join tb_student s on s.id = h.student_id
+        left join tb_class c on c.id = s.class_id
+        <where>
+            <if test="studentId!=null">
+                s.id = #{studentId}
+            </if>
+            <if test="startTime!=null">
+                and h.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and h.time&lt;=#{endTime}
+            </if>
+            ORDER BY h.time DESC
+            LIMIT #{page},#{limit}
+        </where>
+    </select>
+    <select id="CountSelectWithStudent" resultType="java.lang.Long">
+        select count(h.id)
+        from tb_healthstatus h
+        left join tb_student s on s.id = h.student_id
+        left join tb_class c on c.id = s.class_id
+        <where>
+            <if test="studentId!=null">
+                s.id = #{studentId}
+            </if>
+            <if test="startTime!=null">
+                and h.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and h.time&lt;=#{endTime}
+            </if>
+        </where>
+    </select>
+    <select id="selectByAdmin" resultType="com.scujj.entity.HealthStatusEntity" resultMap="selectWithStudent">
+        select h.id hid,
+        student_id,
+        h.health_status,
+        fever,
+        others,
+        contact,
+        province,
+        city,
+        county,
+        position,
+        time,
+        riskarea,
+        s.id sid,
+        s.name,
+        student_number,
+        c.id cid,
+        c.name cname
+        from tb_healthstatus h
+        right join tb_student s on s.id = h.student_id
+        left join tb_class c on c.id = s.class_id
+        left join tb_major tm on tm.id = c.major_id
+        left join tb_college tc on tc.id = tm.college_id
+        <where>
+            <if test="time!=null">
+                (TO_DAYS(h.time) = TO_DAYS(#{time})+1 or h.time is null)
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    tc.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    c.id = #{classId}
+                </foreach>
+            </if>
+            <if test="isClock!=null">
+                <if test="isClock">
+                    and h.id is not null
+                </if>
+                <if test="!isClock">
+                    and h.id is null
+                </if>
+            </if>
+            <if test="isException!=null">
+                <if test="isException">
+                    and (h.health_status!=1 or h.fever!=1 or h.others is not null or h.contact!=1 or h.riskarea is not
+                    null)
+                </if>
+                <if test="!isException">
+                    and (h.id is null or h.health_status=1 and h.fever=1 and h.others is null and h.contact=1 and
+                    h.riskarea
+                    is null)
+                </if>
+            </if>
+        </where>
+        LIMIT #{page},#{limit}
+    </select>
+    <select id="countSelectByAdmin" resultType="java.lang.Long">
+        SELECT COUNT(s.id) from tb_healthstatus h
+        right join tb_student s on s.id = h.student_id
+        left join tb_class c on c.id = s.class_id
+        left join tb_major tm on tm.id = c.major_id
+        left join tb_college tc on tc.id = tm.college_id
+        <where>
+            <if test="time!=null">
+                (TO_DAYS(h.time) = TO_DAYS(#{time})+1 or h.time is null)
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    tc.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    c.id = #{classId}
+                </foreach>
+            </if>
+            <if test="isClock!=null">
+                <if test="isClock">
+                    and h.id is not null
+                </if>
+                <if test="!isClock">
+                    and h.id is null
+                </if>
+            </if>
+            <if test="isException!=null">
+                <if test="isException">
+                    and (h.health_status!=1 or h.fever!=1 or h.others is not null or h.contact!=1 or h.riskarea is not
+                    null)
+                </if>
+                <if test="!isException">
+                    and (h.id is null or h.health_status=1 and h.fever=1 and h.others is null and h.contact=1 and
+                    h.riskarea
+                    is null)
+                </if>
+            </if>
+        </where>
+    </select>
+    <select id="selectHasRiskArea" resultType="com.scujj.entity.HealthStatusEntity" resultMap="selectWithStudent">
+        select ts.name,
+        ts.id tid,
+        tc.id cid,
+        tc.name
+        cname,
+        ts.student_number,
+        ts.phone_number,
+        ts.in_school,
+        ts.health_status,
+        h.health_status,
+        h.time,
+        h.id hid,
+        h.province,
+        h.city,
+        h.county,
+        h.position
+        from tb_healthstatus h
+        inner join tb_student ts on ts.id = h.student_id
+        inner join tb_class tc on ts.class_id = tc.id
+        inner join tb_major tm on tm.id = tc.major_id
+        inner join tb_college t on t.id = tm.college_id
+        inner join tb_riskarea tr on
+        <choose>
+            <when test="range == 1">
+                tr.city = h.city
+            </when>
+            <when test="range == 2">
+                tr.county = h.county
+            </when>
+            <when test="range == 3">
+                tr.location like h.position
+            </when>
+        </choose>
+        <where>
+            <if test="startTime!=null">
+                and h.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and h.time&lt;=#{endTime}
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    tc.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    c.id = #{classId}
+                </foreach>
+            </if>
+        </where>
+        LIMIT #{page},#{limit}
+    </select>
+    <select id="countHasRiskArea" resultType="java.lang.Long">
+        select COUNT(DISTINCT h.id)
+        from tb_healthstatus h
+        inner join tb_student ts on ts.id = h.student_id
+        inner join tb_class tc on ts.class_id = tc.id
+        inner join tb_major tm on tm.id = tc.major_id
+        inner join tb_college t on t.id = tm.college_id
+        inner join tb_riskarea tr on
+        <choose>
+            <when test="range == 1">
+                tr.city = h.city
+            </when>
+            <when test="range == 2">
+                tr.county = h.county
+            </when>
+            <when test="range == 3">
+                tr.location like h.position
+            </when>
+        </choose>
+        <where>
+            <if test="startTime!=null">
+                and h.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and h.time&lt;=#{endTime}
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    tc.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    c.id = #{classId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

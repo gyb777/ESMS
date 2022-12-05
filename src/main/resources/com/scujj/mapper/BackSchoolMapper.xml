@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scujj.mapper.BackSchoolMapper">
+    <resultMap id="selectBackSchoolWithStudent" type="BackSchoolEntity">
+        <id property="id" column="bid"/>
+        <result property="endTime" column="end_time"/>
+        <result property="reason" column="reason"/>
+        <result property="img" column="img"/>
+        <result property="memberNumber" column="member_number"/>
+        <result property="member" column="member"/>
+        <result property="status" column="status"/>
+        <result property="rootName" column="root_name"/>
+        <result property="remark" column="remark"/>
+        <result property="time" column="time"/>
+        <association property="student" javaType="StudentEntity">
+            <id property="id" column="sid"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+    <select id="selectWithStudent" resultType="BackSchoolEntity" resultMap="selectBackSchoolWithStudent">
+        SELECT l.id bid,
+        l.end_time,
+        l.img,
+        l.reason,
+        l.status,
+        l.remark,
+        l.time,
+        l.member_number,
+        l.member,
+        l.root_name,
+        s.id sid,
+        s.name
+        FROM tb_backschool l
+        left join tb_student s on s.id = l.student_id
+        left join tb_class tc on tc.id = s.class_id
+        left join tb_major tm on tm.id = tc.major_id
+        left join tb_college t on t.id = tm.college_id
+        <where>
+            <if test="startTime!=null">
+                l.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and l.time&lt;=#{endTime}
+            </if>
+            <if test="status!=null">
+                and l.status = #{status}
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    t.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    tc.id = #{classId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY l.time DESC
+        LIMIT #{page},#{limit}
+    </select>
+    <select id="countWithStudent" resultType="java.lang.Long">
+        SELECT count(l.id)
+        FROM tb_backschool l
+        left join tb_student s on s.id = l.student_id
+        left join tb_class tc on tc.id = s.class_id
+        left join tb_major tm on tm.id = tc.major_id
+        left join tb_college t on t.id = tm.college_id
+        <where>
+            <if test="startTime!=null">
+                l.time&gt;=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and l.time&lt;=#{endTime}
+            </if>
+            <if test="status!=null">
+                and l.status = #{status}
+            </if>
+            and 1=1
+            <if test="collegeIdList!=null">
+                <foreach collection="collegeIdList" separator="or" open="and(" item="collegeId" close=")">
+                    t.id = #{collegeId}
+                </foreach>
+            </if>
+            <if test="majorIdList!=null">
+                <foreach collection="majorIdList" separator="or" open="and(" item="majorId" close=")">
+                    tm.id = #{majorId}
+                </foreach>
+            </if>
+            <if test="classIdList!=null">
+                <foreach collection="classIdList" separator="or" open="and(" item="classId" close=")">
+                    tc.id = #{classId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

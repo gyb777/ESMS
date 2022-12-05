@@ -35,4 +35,6 @@ public interface StudentController {
     Result updatePhone(HashMap<String,Object> map);
 
     Result updatePasswordByPhoneNumber(HashMap<String,Object> map);
+
+    Result updateInSchool(HashMap<String,Object> map);
 }

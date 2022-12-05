@@ -38,7 +38,7 @@
                 and tm.id = #{majorId}
             </if>
             <if test="classId!=null">
-                and c.id = #{collegeId}
+                and c.id = #{classId}
             </if>
             <if test="key!=null">
                 and s.name like #{key}
@@ -60,7 +60,7 @@
                 and tm.id = #{majorId}
             </if>
             <if test="classId!=null">
-                and c.id = #{collegeId}
+                and c.id = #{classId}
             </if>
             <if test="key!=null">
                 and s.name like #{key}
@@ -73,8 +73,8 @@
         left join tb_class c on c.id = s.class_id
         left join tb_major tm on tm.id = c.major_id
         left join tb_college tc on tc.id = tm.college_id
-        where s.health_status = 1
         <where>
+            s.health_status = 1
             <if test="collegeId!=null">
                 and tc.id = #{collegeId}
             </if>
@@ -82,7 +82,7 @@
                 and tm.id = #{majorId}
             </if>
             <if test="classId!=null">
-                and c.id = #{collegeId}
+                and c.id = #{classId}
             </if>
             <if test="key!=null">
                 and s.name like #{key}
@@ -95,8 +95,8 @@
         left join tb_class c on c.id = s.class_id
         left join tb_major tm on tm.id = c.major_id
         left join tb_college tc on tc.id = tm.college_id
-        where s.health_status = 3
         <where>
+            s.health_status = 3
             <if test="collegeId!=null">
                 and tc.id = #{collegeId}
             </if>
@@ -104,7 +104,7 @@
                 and tm.id = #{majorId}
             </if>
             <if test="classId!=null">
-                and c.id = #{collegeId}
+                and c.id = #{classId}
             </if>
             <if test="key!=null">
                 and s.name like #{key}
@@ -117,8 +117,8 @@
         left join tb_class c on c.id = s.class_id
         left join tb_major tm on tm.id = c.major_id
         left join tb_college tc on tc.id = tm.college_id
-        where s.in_school = 1
         <where>
+            s.in_school = 1
             <if test="collegeId!=null">
                 and tc.id = #{collegeId}
             </if>
@@ -126,7 +126,7 @@
                 and tm.id = #{majorId}
             </if>
             <if test="classId!=null">
-                and c.id = #{collegeId}
+                and c.id = #{classId}
             </if>
             <if test="key!=null">
                 and s.name like #{key}
